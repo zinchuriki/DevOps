@@ -1,21 +1,40 @@
-yaml
 name: Deploy to GitHub Pages
+
 on:
- push:
- branches:
- - main # Trigger the workflow on push to the main branch
+  push:
+    branches:
+      - main # Trigger the workflow on push to the main branch
+
 jobs:
- deploy:
- runs-on: windows-latest
- steps:
- - name: Checkout code
- uses: actions/checkout@v2
- - name: Build site
- run: |
- mkdir -p build
- cp index.html build/index.html
- - name: Deploy to GitHub Pages
- uses: peaceiris/actions-gh-pages@v3
- with:
- github_token: ${{ secrets.GITHUB_TOKEN }}
- publish_dir: ./build
+  deploy:
+    runs-on: windows-latest # Use Windows runner
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Optional: Set up Node.js (only if your site build requires it)
+      # - name: Setup Node.js
+      #   uses: actions/setup-node@v2
+      #   with:
+      #     node-version: '14' # Use the Node.js version required by your project
+
+      # Optional: Cache dependencies to speed up builds
+      # - name: Cache dependencies
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: C:\Users\runneradmin\AppData\Roaming\npm-cache
+      #     key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-node-
+
+      - name: Build site
+        run: |
+          mkdir build
+          copy index.html build\index.html
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
